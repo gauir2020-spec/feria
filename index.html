@@ -1,0 +1,285 @@
+<!-- NOVA VERSÃO PREMIUM DO JOGO DA MEMÓRIA - DESIGN BONITO E PROFISSIONAL -->
+<!-- HTML + CSS + JS totalmente refeitos -->
+
+<!-- ============================= -->
+<!-- index.html (MUITO MELHORADO) -->
+<!-- ============================= -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jogo da Memória Deluxe</title>
+  <link rel="stylesheet" href="css//style.css">
+</head>
+<body>
+  <div class="container">
+
+    <header class="header">
+      <h1 class="title">🎴 Jogo da Memória Deluxe</h1>
+
+      <div class="scoreboard">
+        <div class="player" id="p1box">Jogador 1 <span id="p1">0</span></div>
+        <div class="player" id="p2box">Jogador 2 <span id="p2">0</span></div>
+      </div>
+
+      <div class="turn-box">Vez de: <span id="turn">Jogador 1</span></div>
+
+      <button id="restart" class="btn">🔄 Reiniciar</button>
+    </header>
+
+    <section id="board" class="board"></section>
+
+  </div>
+
+  <script src="js//app.js" defer></script>
+</body>
+</html>
+
+
+<!-- ============================= -->
+<!-- style.css (DESIGN PREMIUM)    -->
+<!-- ============================= -->
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #111827, #0e1220, #1e293b);
+  --card-back: #1f2937;
+  --card-front: #ffffff;
+  --accent: #4f46e5;
+  --accent2: #a78bfa;
+  --text-light: #e2e8f0;
+  --gold: #facc15;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-gradient);
+  font-family: 'Poppins', Arial, sans-serif;
+  color: var(--text-light);
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 950px;
+}
+
+/* TÍTULO */
+.title {
+  font-size: 2rem;
+  text-align: center;
+  color: var(--gold);
+  margin-bottom: 10px;
+  text-shadow: 0 0 12px rgba(255, 230, 100, 0.7);
+  letter-spacing: 2px;
+}
+
+/* SCOREBOARD */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.scoreboard {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 10px;
+}
+.player {
+  background: rgba(255,255,255,0.08);
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 0 8px rgba(0,0,0,0.4);
+}
+
+/* VEZ DO JOGADOR */
+.turn-box {
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+  color: var(--accent2);
+  text-shadow: 0 0 8px rgba(167,139,250,0.7);
+}
+
+/* BOTÃO */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  transition: 0.3s;
+}
+.btn:hover { background: var(--accent2); }
+
+/* TABULEIRO */
+.board {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  margin-top: 20px;
+}
+
+/* CARTAS (DESIGN PREMIUM) */
+.card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+  cursor: pointer;
+}
+
+.card-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+/* FACE DE TRÁS */
+.card-back {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 3px solid var(--gold);
+  color: var(--gold);
+  font-size: 2.2rem;
+  font-weight: bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  box-shadow:0 0 18px rgba(255, 208, 0, 0.3);
+}
+
+/* FACE DA FRENTE */
+.card-front {
+  background: var(--card-front);
+  border-radius: 12px;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border: 2px solid #ddd;
+  font-size: 1rem;
+  color: #000;
+  backface-visibility: hidden;
+}
+
+.card-front h3 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.matched {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px var(--gold));
+  animation: pulse 0.5s;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+</style>
+
+
+<!-- ============================= -->
+<!-- app.js (JOGABILIDADE MELHORADA) -->
+<!-- ============================= -->
+<script>
+const // Agora cada carta pode ter:
+//  img: emoji OU caminho de imagem (ex: "assets/osmose.png")
+// O sistema detecta automaticamente.
+CARDS = [
+  {id:'1', q:'O que é osmose?', a:'Água passando pela membrana.', img:'💧'},
+  {id:'2', q:'Difusão simples?', a:'Alta → baixa concentração.', img:'↔️'},
+  {id:'3', q:'Transporte ativo?', a:'Usa ATP (energia).', img:'⚡'},
+  {id:'4', q:'Moléculas grandes entram por?', a:'Endocitose.', img:'🫧'},
+  {id:'5', q:'Moléculas grandes saem por?', a:'Exocitose.', img:'📤'},
+  {id:'6', q:'Fagocitose é...', a:'Célula comendo partículas.', img:'🍽️'}
+];
+
+let turno = 1;
+let p1 = 0;
+let p2 = 0;
+let deck = [];
+let flipped = [];
+
+const board = document.getElementById("board");
+const p1box = document.getElementById("p1");
+const p2box = document.getElementById("p2");
+const turnLabel = document.getElementById("turn");
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }}
+
+function gerarBaralho(){
+  deck = [];
+  CARDS.forEach(c=>{
+    deck.push({type:'Q', id:c.id, text:c.q, img:c.img, uid:Math.random()});
+    deck.push({type:'A', id:c.id, text:c.a, img:c.img, uid:Math.random()});
+  });
+  shuffle(deck);
+}
+
+function desenhar(){
+  board.innerHTML = "";
+  deck.forEach(card=>{
+    const el = document.createElement("div");
+    el.className = "card";
+    el.dataset.uid = card.uid;
+
+    el.innerHTML = `
+      <div class="card-inner">
+        <div class="card-face card-back">🂠</div>
+        <div class="card-face card-front">
+          $${card.img.endsWith('.png') || card.img.endsWith('.jpg') ? '<img src="'+card.img+'" class="card-img">' : '<span class=\"emoji\">'+card.img+'<\/span>'}
+          <p>${card.text}</p>
+        </div>
+      </div>`;
+
+    el.addEventListener("click", ()=> virar(el, card));
+    board.appendChild(el);
+  });
+}
+
+function virar(el, card){
+  if(el.classList.contains("flipped") || el.classList.contains("matched")) return;
+  if(flipped.length === 2) return;
+
+  el.classList.add("flipped");
+  flipped.push({el, card});
+
+  if(flipped.length === 2){ setTimeout(()=> verificar(), 700); }
+}
+
+function verificar(){
+  const [c1, c2] = flipped;
+  const correto = c1.card.id === c2.card.id && c1.card.type !== c2.card.type;
+
+  if(correto){
+    c1.el.classList.add("matched");
+    c2.el.classList.add("matched");
+
+    if(turno === 1){ p1++; p1box.textContent = p1; }
+    else{ p2++; p2box.textContent = p2; }
+
+  } else {
+    setTimeout(()=>{
+      c1.el.classList.remove("flipped");
+      c2.el.classList.remove("flipped");
+    },
